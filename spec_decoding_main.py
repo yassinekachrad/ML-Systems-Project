@@ -11,6 +11,15 @@
 #     --detailed-timing \
 #     --verbose
 
+import torch
+import time
+import argparse
+import os  # Added for environment variable access
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from enum import Enum
+from typing import List, Dict, Tuple, Optional, Union, Any
+
+
 
 def run_benchmark(
     decoder,
@@ -184,13 +193,7 @@ def run_benchmark(
             print(f"\nAverage speedup per prompt: {avg_speedup:.2f}x")
             print(f"Overall speedup: {overall_speedup:.2f}x")
     
-    return benchmark_summaryimport torch
-import time
-import argparse
-import os  # Added for environment variable access
-from transformers import AutoModelForCausalLM, AutoTokenizer
-from enum import Enum
-from typing import List, Dict, Tuple, Optional, Union, Any
+    return benchmark_summary
 
 
 class ModelFamily(Enum):
@@ -216,21 +219,20 @@ class ModelConfig:
     # Model family configurations
     FAMILY_CONFIGS = {
         ModelFamily.LLAMA: {
-            "small": "meta-llama/Meta-Llama-3-8B",  # Updated from Llama-3.2-1B
-            "medium": "meta-llama/Llama-3.1-8B",    # Updated from Llama-3.2-3B
-            "large": "meta-llama/Llama-3.1-70B",    # Updated from Llama-3.2-8B
+            "small": "meta-llama/Llama-3.2-1B",
+            "medium": "meta-llama/Llama-3.2-3B",
+            "large": "meta-llama/Llama-3.1-8B",
             "default_device": detect_default_device.__func__(),
             "dtype": torch.float16
         },
         ModelFamily.GEMMA: {
-            "small": "google/gemma-3-1b",
-            "medium": "google/gemma-3-4b",
-            "large": "google/gemma-3-12b",
+            "small": "google/gemma-3-1b-it",
+            "medium": "google/gemma-3-4b-it",
+            "large": "google/gemma-3-12b-it",
             "default_device": detect_default_device.__func__(),
             "dtype": torch.float16
         }
     }
-    
     @staticmethod
     def get_model_paths(family: ModelFamily) -> Dict[str, str]:
         """Get model paths for a specific model family."""
